@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
+import { useSelector, useDispatch } from "react-redux";
+import { setLocations } from "../redux/slices/locationSlice";
 const VictimsAdd = () => {
     const navigate = useNavigate();
-    const [locations, setLocations] = useState([]);
+    const dispatch = useDispatch();
+
+    const locations = useSelector((state) => state.location.locations);
 
     const getLocations = async () => {
         try {
             const response = await api.get("/location");
-            setLocations(response.data);
+            dispatch(setLocations(response.data));
         } catch (error) {
             console.log(error);
         }

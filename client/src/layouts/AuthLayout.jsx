@@ -1,19 +1,22 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth } from "../redux/slices/authSlice";
 
 const AuthLayout = ({ type }) => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
+    // const [username, setUsername] = useState("");
+    // const [password, setPassword] = useState("");
+    const auth = useSelector((state) => state.auth.auth);
 
     // Fungsi untuk membuat user baru
     const createUser = async (e) => {
         e.preventDefault();
         try {
             await api.post("/user/register", {
-                username: username,
-                password: password,
+                username: auth.username,
+                password: auth.password,
             });
             alert("Registration successful!");
             navigate("/login", { replace: true });
@@ -27,8 +30,8 @@ const AuthLayout = ({ type }) => {
         e.preventDefault();
         try {
             const response = await api.post("/user/login", {
-                username: username,
-                password: password,
+                username: auth.username,
+                password: auth.password,
             });
             localStorage.setItem("token", response.data.token);
             alert("Login successful!");
@@ -55,8 +58,10 @@ const AuthLayout = ({ type }) => {
                             <input
                                 type="text"
                                 id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={auth.username}
+                                onChange={(e) =>
+                                    dispatch(setAuth({ ...auth, username: e.target.value }))
+                                }
                                 className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded"
                                 placeholder="Enter your username"
                                 required
@@ -69,8 +74,10 @@ const AuthLayout = ({ type }) => {
                             <input
                                 type="password"
                                 id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                value={auth.password}
+                                onChange={(e) =>
+                                    dispatch(setAuth({ ...auth, password: e.target.value }))
+                                }
                                 className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded"
                                 placeholder="Enter your password"
                                 required
@@ -102,8 +109,10 @@ const AuthLayout = ({ type }) => {
                             <input
                                 type="text"
                                 id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={auth.username}
+                                onChange={(e) =>
+                                    dispatch(setAuth({ ...auth, username: e.target.value }))
+                                }
                                 className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded"
                                 placeholder="Choose a username"
                                 required
@@ -116,8 +125,10 @@ const AuthLayout = ({ type }) => {
                             <input
                                 type="password"
                                 id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                value={auth.password}
+                                onChange={(e) =>
+                                    dispatch(setAuth({ ...auth, password: e.target.value }))
+                                }
                                 className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded"
                                 placeholder="Create a password"
                                 required

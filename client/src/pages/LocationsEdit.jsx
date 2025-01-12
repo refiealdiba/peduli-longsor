@@ -1,21 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { api } from "../api/api";
+import { setLocation } from "../redux/slices/locationSlice";
 
 const LocationEdit = () => {
-    const { id } = useParams(); // Mengambil ID dari parameter URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [location, setLocation] = useState({
-        kota: "",
-        provinsi: "",
-        tanggal: "",
-    });
+    const dispatch = useDispatch();
+
+    const location = useSelector((state) => state.location.location);
 
     const getLocation = async () => {
         try {
             const response = await api.get(`/location/${id}`);
             if (response.status === 200) {
-                setLocation(response.data);
+                const data = response.data; // Konversi ke objek Date
+                dispatch(setLocation(data));
+                console.log(data);
             }
         } catch (error) {
             console.log(error);
@@ -59,7 +61,9 @@ const LocationEdit = () => {
                         className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded text-lg"
                         name="kota"
                         value={location.kota}
-                        onChange={(e) => setLocation((prev) => ({ ...prev, kota: e.target.value }))}
+                        onChange={(e) =>
+                            dispatch(setLocation({ ...location, kota: e.target.value }))
+                        }
                     />
                 </div>
                 <div className="mb-6">
@@ -73,7 +77,7 @@ const LocationEdit = () => {
                         name="provinsi"
                         value={location.provinsi}
                         onChange={(e) =>
-                            setLocation((prev) => ({ ...prev, provinsi: e.target.value }))
+                            dispatch(setLocation({ ...location, provinsi: e.target.value }))
                         }
                     />
                 </div>
@@ -86,9 +90,13 @@ const LocationEdit = () => {
                         id="tanggal"
                         className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded text-lg"
                         name="tanggal"
-                        value={location.tanggal}
+                        value={
+                            location.tanggal
+                                ? new Date(location.tanggal).toISOString().split("T")[0]
+                                : ""
+                        }
                         onChange={(e) =>
-                            setLocation((prev) => ({ ...prev, tanggal: e.target.value }))
+                            dispatch(setLocation({ ...location, tanggal: e.target.value }))
                         }
                     />
                 </div>

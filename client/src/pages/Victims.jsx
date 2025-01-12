@@ -1,15 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/api";
+import { useSelector, useDispatch } from "react-redux";
+import { setLocations } from "../redux/slices/locationSlice";
+import { setVictims } from "../redux/slices/victimSlice";
 
 const Victims = () => {
-    const [victims, setVictims] = useState([]);
-    const [locations, setLocations] = useState([]);
+    const dispatch = useDispatch();
+    const locations = useSelector((state) => state.location.locations);
+    const victims = useSelector((state) => state.victim.victims);
 
     const getVictims = async () => {
         try {
             const response = await api.get("/victim");
-            setVictims(response.data);
+            dispatch(setVictims(response.data));
         } catch (error) {
             console.log(error);
         }
@@ -18,7 +22,7 @@ const Victims = () => {
     const getLocations = async () => {
         try {
             const response = await api.get("/location");
-            setLocations(response.data);
+            dispatch(setLocations(response.data));
         } catch (error) {
             console.log(error);
         }

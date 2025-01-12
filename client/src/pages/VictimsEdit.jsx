@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { setLocations } from "../redux/slices/locationSlice";
+import { setVictim } from "../redux/slices/victimSlice";
 
 const VictimsEdit = () => {
-    const { id } = useParams(); // Mengambil ID korban dari URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [locations, setLocations] = useState([]);
-    const [victim, setVictim] = useState({
-        nama: "",
-        jenisKelamin: "",
-        umur: "",
-        idLokasi: "",
-    });
+    const dispatch = useDispatch();
+
+    const locations = useSelector((state) => state.location.locations);
+    const victim = useSelector((state) => state.victim.victim);
 
     const getLocations = async () => {
         try {
             const response = await api.get("/location");
-            setLocations(response.data);
+            dispatch(setLocations(response.data));
         } catch (error) {
             console.log(error);
         }
@@ -25,7 +25,7 @@ const VictimsEdit = () => {
     const getVictim = async () => {
         try {
             const response = await api.get(`/victim/${id}`);
-            setVictim(response.data);
+            dispatch(setVictim(response.data));
             console.log(response.data);
         } catch (error) {
             console.log(error);
@@ -71,7 +71,9 @@ const VictimsEdit = () => {
                         className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded text-lg"
                         name="nama"
                         value={victim.nama}
-                        onChange={(e) => setVictim((prev) => ({ ...prev, nama: e.target.value }))}
+                        onChange={(e) =>
+                            dispatch(setVictim((prev) => ({ ...prev, nama: e.target.value })))
+                        }
                     />
                 </div>
                 <div className="mb-6">
@@ -84,7 +86,9 @@ const VictimsEdit = () => {
                         name="jenisKelamin"
                         value={victim.jenisKelamin}
                         onChange={(e) =>
-                            setVictim((prev) => ({ ...prev, jenisKelamin: e.target.value }))
+                            dispatch(
+                                setVictim((prev) => ({ ...prev, jenisKelamin: e.target.value }))
+                            )
                         }
                     >
                         <option value="Laki-laki">Laki-laki</option>
@@ -101,7 +105,9 @@ const VictimsEdit = () => {
                         className="w-full bg-[#263842] text-gray-50 px-4 py-3 rounded text-lg"
                         name="umur"
                         value={victim.umur}
-                        onChange={(e) => setVictim((prev) => ({ ...prev, umur: e.target.value }))}
+                        onChange={(e) =>
+                            dispatch(setVictim((prev) => ({ ...prev, umur: e.target.value })))
+                        }
                     />
                 </div>
                 <div className="mb-6">
@@ -114,7 +120,7 @@ const VictimsEdit = () => {
                         name="lokasi"
                         value={victim.idLokasi}
                         onChange={(e) =>
-                            setVictim((prev) => ({ ...prev, idLokasi: e.target.value }))
+                            dispatch(setVictim((prev) => ({ ...prev, idLokasi: e.target.value })))
                         }
                     >
                         {locations.map((location) => (
